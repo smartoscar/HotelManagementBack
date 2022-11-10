@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oscar.springbootstudy.mapper.RoleResourceMapper">
+    <select id="getResourcesByUsername" parameterType="String" resultType="com.oscar.springbootstudy.pojo.dto.UserResourceDto">
+        SELECT
+            tr."id" as "resourceId",
+            tr.title as "name",
+            tr.href,
+            tr.is_menu as "isMenu",
+            tr.permission_code as "permissionCode",
+            tr.parent_id as "parentId",
+            tr.is_leaf as "isLeaf"
+        FROM
+                ( SELECT tu."id" FROM t_user tu WHERE tu.username = #{username} ) tu
+                    LEFT JOIN t_user_role tur ON tu."id" = tur.user_id
+                    LEFT JOIN t_role_resource trr ON tur.role_id = trr.role_id
+                    LEFT JOIN t_resource tr ON trr.resource_id = tr."id"
+        where tr.is_enable = 1
+        order by tr.parent_id, tr."id"
+    </select>
+
+    <select id="getRoleResourcesByRoleId" resultType="com.oscar.springbootstudy.pojo.Resource" parameterType="Integer">
+        select
+               tr.*
+        from
+             t_role_resource trr
+            left join
+                 t_resource tr on trr.resource_id = tr.id
+        where trr.role_id = #{roleId} and tr.is_leaf = 1 and tr.is_menu = 0
+    </select>
+</mapper>

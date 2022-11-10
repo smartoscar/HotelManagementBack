@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oscar.springbootstudy.mapper.ResourceMapper">
+    <select id="getUserResourceByUsername" parameterType="string" resultType="string">
+        SELECT
+                tr.permission_code
+        FROM
+                ( SELECT ID FROM t_user tu WHERE username = #{username} ) tut
+                    LEFT JOIN t_user_role tur ON tut.ID = tur.user_id
+                    LEFT JOIN t_role_resource trr ON tur.role_id = trr.role_id
+                    LEFT JOIN t_resource tr ON trr.resource_id = tr.ID
+    </select>
+</mapper>

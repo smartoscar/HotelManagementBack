@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oscar.springbootstudy.mapper.UserMapper">
+    <select id="selectUserPage" resultType="com.oscar.springbootstudy.pojo.dto.UserDto" parameterType="com.oscar.springbootstudy.pojo.dto.UserDto">
+        SELECT
+            tu."id",
+            tu.username,
+            tu.password,
+            tu.nickname,
+            tu.last_login_time as "lastLoginTime",
+            tu.create_user as "createUser",
+            tu.create_time as "createTime",
+            tu.update_user as "updateUser",
+            tu.update_time as "updateTime",
+            tu.photo,
+            tr."id" as "roleId",
+            tr.role_name as "roleName"
+        FROM t_user tu
+            LEFT JOIN t_user_role tur ON tu.ID = tur.user_id
+            LEFT JOIN t_role tr ON tur.role_id = tr."id"
+        <where>
+            <if test="param.username != null and param.username != ''">
+                tu.username = #{param.username}
+            </if>
+            <if test="param.roleId != null and param.roleId != ''">
+                and tr."id" = #{param.roleId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updatePassword">
+        update t_user set password = #{password} where username = #{username}
+    </update>
+
+    <select id="getUserDtoByName" parameterType="string" resultType="com.oscar.springbootstudy.pojo.dto.UserDto">
+        SELECT
+            tu."id",
+            tu.username,
+            tu.nickname,
+            tu.last_login_time as "lastLoginTime",
+            tu.photo,
+            tr."id" AS "roleId",
+            tr.role_name AS "roleName"
+        FROM
+                ( SELECT * FROM t_user WHERE username = #{username} ) tu
+                    LEFT JOIN t_user_role tur ON  tu."id" = tur.user_id
+                    LEFT JOIN t_role tr ON tr."id" = tur.role_id
+    </select>
+
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oscar.springbootstudy.mapper.RoomMapper">
+    <update id="enableRoom" parameterType="Integer">
+        update t_room set is_enable = abs(is_enable - 1) where id = #{id}
+    </update>
+    <select id="selectListByParam" parameterType="map" resultType="com.oscar.springbootstudy.pojo.dto.RoomDto">
+        select tr.*, trt.name as "roomTypeName" from t_room tr left join t_room_type trt on tr.room_type_id = trt.id
+        where is_deleted = 0
+        <if test="name != null and name != ''">
+            and name like concat('%',#{name},'%')
+        </if>
+        <if test="roomTypeId != null and roomTypeId > 0">
+            and roomTypeId = #{roomTypeId}
+        </if>
+        <if test="status != null and status > 0">
+            and status = #{status}
+        </if>
+        order by tr.id
+    </select>
+
+    <select id="selectRoomPage" resultType="com.oscar.springbootstudy.pojo.dto.RoomDto" parameterType="com.oscar.springbootstudy.pojo.dto.RoomDto">
+        select tr.*, trt.name as "roomTypeName" from t_room tr left join t_room_type trt on tr.room_type_id = trt.id
+        where is_deleted = 0
+        <if test="roomDto.name != null and roomDto.name != ''">
+            and name like concat('%',#{roomDto.name},'%')
+        </if>
+        <if test="roomDto.roomTypeId != null and roomDto.roomTypeId > 0">
+            and roomTypeId = #{roomDto.roomTypeId}
+        </if>
+        <if test="roomDto.status != null and roomDto.status > 0">
+            and status = #{roomDto.status}
+        </if>
+        order by tr.id
+    </select>
+</mapper>
